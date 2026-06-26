@@ -6,7 +6,7 @@ import { spawn } from 'child_process'
 import { isNewer } from '@shared/version'
 import { IPC, UpdateCheckResult } from '@shared/ipc-contract'
 
-const REPO = { owner: 'Dushmantha-Amarasinghe', repo: 'frostbyte-desktop' }
+const REPO = { owner: 'Dushmantha-Amarasinghe', repo: 'frostbyte' }
 const CHECK_DELAY_MS = 8_000          // wait 8s after launch before first check
 const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000 // then every 24 h
 

@@ -10,11 +10,10 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/Dushmantha-Amarasinghe/frostbyte-desktop?style=flat-square&color=5bb8f5&label=release" alt="release" />
-  <img src="https://img.shields.io/github/downloads/Dushmantha-Amarasinghe/frostbyte-desktop/total?style=flat-square&color=5bb8f5&label=downloads" alt="downloads" />
-  <img src="https://img.shields.io/badge/platform-Windows-5bb8f5?style=flat-square&logo=windows" alt="platform" />
-  <img src="https://img.shields.io/badge/encoder-NVENC%20%7C%20QSV%20%7C%20AMF-5bb8f5?style=flat-square" alt="encoders" />
-  <img src="https://img.shields.io/badge/license-MIT-5bb8f5?style=flat-square" alt="license" />
+  <img src="https://img.shields.io/github/v/release/Dushmantha-Amarasinghe/frostbyte?style=flat-square&labelColor=343b41&color=5bb8f5&label=release" alt="release" />
+  <img src="https://img.shields.io/github/downloads/Dushmantha-Amarasinghe/frostbyte/total?style=flat-square&labelColor=343b41&color=e8883a&label=downloads" alt="downloads" />
+  <img src="https://img.shields.io/badge/platform-Windows-0078d4?style=flat-square&labelColor=343b41&logo=windows&logoColor=white" alt="platform" />
+  <img src="https://img.shields.io/badge/license-MIT-3fb950?style=flat-square&labelColor=343b41" alt="license" />
 </p>
 
 <br />
@@ -65,7 +64,7 @@ Frostbyte wraps FFmpeg in a clean desktop UI built for Windows. It uses your GPU
 
 ## Download
 
-**[→ Download latest installer](https://github.com/Dushmantha-Amarasinghe/frostbyte-desktop/releases/latest)** — Windows, no admin required
+**[→ Download latest installer](https://github.com/Dushmantha-Amarasinghe/frostbyte/releases/latest)**
 
 Or build from source — see [Development](#development) below.
 

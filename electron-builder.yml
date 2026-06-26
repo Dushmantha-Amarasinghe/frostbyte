@@ -39,4 +39,5 @@ nsis:
   shortcutName: Frostbyte
   uninstallDisplayName: Frostbyte
   createDesktopShortcut: always
+  include: build/installer.nsh
 npmRebuild: false
