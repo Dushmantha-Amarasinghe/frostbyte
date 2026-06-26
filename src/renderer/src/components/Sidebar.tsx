@@ -22,6 +22,7 @@ export function Sidebar(): React.JSX.Element {
     s.views.reduce((n, v) => n + v.stats.queued + v.stats.processing, 0)
   )
   const vendor = useAppStore((s) => s.caps.vendorGuess)
+  const updateAvailable = useAppStore((s) => s.updateInfo?.updateAvailable ?? false)
   const accel =
     vendor === 'nvidia'
       ? { name: 'NVIDIA NVENC', on: true }
@@ -60,6 +61,12 @@ export function Sidebar(): React.JSX.Element {
                 {to === '/watch' && watchActive > 0 && (
                   <span className="relative z-10 ml-auto rounded-full bg-frost px-1.5 font-mono text-[11px] font-bold text-ink">
                     {watchActive}
+                  </span>
+                )}
+                {to === '/about' && updateAvailable && (
+                  <span className="relative z-10 ml-auto flex h-2 w-2 items-center justify-center">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-frost opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-frost" />
                   </span>
                 )}
               </div>

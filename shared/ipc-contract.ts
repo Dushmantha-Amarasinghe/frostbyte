@@ -68,6 +68,7 @@ export interface UpdateCheckResult {
   latestVersion: string | null
   updateAvailable: boolean
   releaseUrl: string | null
+  downloadUrl: string | null
   releaseNotes: string | null
   error: string | null
 }
@@ -117,6 +118,9 @@ export const IPC = {
   getOutputConfig: 'settings:getOutputConfig',
   setOutputConfig: 'settings:setOutputConfig',
   updateCheck: 'update:check',
+  updateDownloadInstall: 'update:downloadInstall',
+  evtUpdateAvailable: 'update:available',
+  evtUpdateProgress: 'update:progress',
   revealFile: 'shell:revealFile',
   appInfo: 'app:getInfo',
   appGetStartup: 'app:getStartup',

@@ -6,7 +6,7 @@ import { probe, ffmpegVersion } from './ffprobe'
 import { detectEncoders, cachedCaps } from './encoder-detect'
 import { buildFFmpegArgs, argsToDisplay } from '@shared/command-builder'
 import { resolveOutputPath } from './output'
-import { checkForUpdate } from './updater'
+import { checkForUpdate, downloadAndInstall, startAutoUpdater } from './updater'
 import { ffmpegPath } from './ffmpeg-path'
 import { loadOutputConfig, saveOutputConfig } from './config'
 import { Queue } from './queue'
@@ -101,7 +101,15 @@ export function registerIpc(
   })
 
   ipcMain.handle(IPC.updateCheck, async () => checkForUpdate())
+  ipcMain.handle(IPC.updateDownloadInstall, async (_e, { url }: { url: string }) => {
+    await downloadAndInstall(url, (percent) =>
+      getWindow()?.webContents.send(IPC.evtUpdateProgress, percent)
+    )
+  })
   ipcMain.handle(IPC.revealFile, async (_e, { path }: { path: string }) => shell.showItemInFolder(path))
+
+  // Background update checks — emit to renderer when an update is found
+  startAutoUpdater((channel, data) => getWindow()?.webContents.send(channel, data))
   ipcMain.handle(IPC.appInfo, async () => ({
     version: app.getVersion(),
     ffmpegVersion: await ffmpegVersion(ffmpegPath())

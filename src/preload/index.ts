@@ -62,6 +62,12 @@ const frostbyte = {
 
   // updates / info
   checkUpdate: (): Promise<UpdateCheckResult> => ipcRenderer.invoke(IPC.updateCheck),
+  downloadAndInstall: (url: string): Promise<void> =>
+    ipcRenderer.invoke(IPC.updateDownloadInstall, { url }),
+  onUpdateAvailable: (cb: (result: UpdateCheckResult) => void): (() => void) =>
+    on<UpdateCheckResult>(IPC.evtUpdateAvailable, cb),
+  onUpdateProgress: (cb: (percent: number) => void): (() => void) =>
+    on<number>(IPC.evtUpdateProgress, cb),
   appInfo: (): Promise<AppInfo> => ipcRenderer.invoke(IPC.appInfo),
   getStartup: (): Promise<boolean> => ipcRenderer.invoke(IPC.appGetStartup),
   setStartup: (enabled: boolean): Promise<void> => ipcRenderer.invoke(IPC.appSetStartup, { enabled }),

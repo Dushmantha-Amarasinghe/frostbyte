@@ -1,23 +1,53 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { RefreshCw, CheckCircle2, Download, Cpu, ExternalLink, Coffee } from 'lucide-react'
+import { RefreshCw, CheckCircle2, Download, Cpu, ExternalLink, Coffee, ArrowDownToLine } from 'lucide-react'
 import { Snowflake } from '@renderer/components/Snowflake'
 import { Button, Label } from '@renderer/components/ui'
+import { ProgressBar } from '@renderer/components/ProgressBar'
 import { useAppStore } from '@renderer/store/appStore'
 import { UpdateCheckResult } from '@shared/ipc-contract'
 import { cn } from '@renderer/lib/utils'
 
+type DownloadState = 'idle' | 'downloading' | 'ready'
+
 export function About(): React.JSX.Element {
-  const { appInfo, caps } = useAppStore()
-  const [update, setUpdate] = useState<UpdateCheckResult | null>(null)
+  const { appInfo, caps, updateInfo, setUpdateInfo } = useAppStore()
   const [checking, setChecking] = useState(false)
+  const [localUpdate, setLocalUpdate] = useState<UpdateCheckResult | null>(updateInfo)
+  const [downloadState, setDownloadState] = useState<DownloadState>('idle')
+  const [downloadPercent, setDownloadPercent] = useState(0)
+
+  // Keep local state in sync when background check fires
+  useEffect(() => {
+    if (updateInfo) setLocalUpdate(updateInfo)
+  }, [updateInfo])
+
+  // Subscribe to download progress
+  useEffect(() => {
+    const off = window.frostbyte.onUpdateProgress((pct) => setDownloadPercent(pct))
+    return off
+  }, [])
 
   const checkUpdate = async (): Promise<void> => {
     setChecking(true)
     try {
-      setUpdate(await window.frostbyte.checkUpdate())
+      const result = await window.frostbyte.checkUpdate()
+      setLocalUpdate(result)
+      if (result.updateAvailable) setUpdateInfo(result)
     } finally {
       setChecking(false)
+    }
+  }
+
+  const startDownload = async (): Promise<void> => {
+    if (!localUpdate?.downloadUrl) return
+    setDownloadState('downloading')
+    setDownloadPercent(0)
+    try {
+      await window.frostbyte.downloadAndInstall(localUpdate.downloadUrl)
+      setDownloadState('ready')
+    } catch {
+      setDownloadState('idle')
     }
   }
 
@@ -26,6 +56,8 @@ export function About(): React.JSX.Element {
     caps.qsv.h264 && 'Intel Quick Sync',
     caps.amf.h264 && 'AMD AMF'
   ].filter(Boolean) as string[]
+
+  const hasUpdate = localUpdate?.updateAvailable && localUpdate.downloadUrl
 
   return (
     <div className="mx-auto max-w-2xl px-10 py-9">
@@ -50,33 +82,75 @@ export function About(): React.JSX.Element {
       </Section>
 
       <Section title="Updates">
+        {/* Status row */}
         <div className="flex items-center justify-between">
-          <Label>Latest release</Label>
-          <Button onClick={checkUpdate} disabled={checking}>
+          <div>
+            <Label>Latest release</Label>
+            {localUpdate && !localUpdate.error && (
+              <div className="mt-0.5 text-xs text-textFaint">
+                {localUpdate.updateAvailable
+                  ? `v${localUpdate.latestVersion} available`
+                  : `v${localUpdate.latestVersion} · you're up to date`}
+              </div>
+            )}
+            {localUpdate?.error && (
+              <div className="mt-0.5 text-xs text-textFaint">{localUpdate.error}</div>
+            )}
+          </div>
+          <Button onClick={checkUpdate} disabled={checking || downloadState === 'downloading'}>
             <RefreshCw size={15} className={cn(checking && 'animate-spin')} />
             Check now
           </Button>
         </div>
-        {update && (
-          <div className="mt-3 text-sm">
-            {update.error ? (
-              <span className="text-textFaint">{update.error}</span>
-            ) : update.updateAvailable ? (
-              <button
-                onClick={() => update.releaseUrl && window.open(update.releaseUrl)}
-                className="no-drag flex items-center gap-2 font-semibold text-frost"
-              >
-                <Download size={16} />
-                Update available: v{update.latestVersion}
-              </button>
-            ) : (
-              <span className="flex items-center gap-2 text-textDim">
-                <CheckCircle2 size={16} className="text-frost" />
-                You&apos;re on the latest version
-              </span>
-            )}
+
+        {/* Update available — download/install */}
+        {hasUpdate && downloadState === 'idle' && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 flex items-center justify-between rounded-lg border border-frost/20 bg-frost/[0.06] px-4 py-3"
+          >
+            <div className="flex items-center gap-2.5">
+              <Download size={16} className="text-frost" />
+              <div>
+                <div className="text-sm font-semibold text-text">
+                  v{localUpdate.latestVersion} is ready
+                </div>
+                <div className="text-xs text-textFaint">Downloads and installs automatically</div>
+              </div>
+            </div>
+            <Button variant="primary" onClick={startDownload}>
+              <ArrowDownToLine size={15} />
+              Update
+            </Button>
+          </motion.div>
+        )}
+
+        {/* Downloading progress */}
+        {downloadState === 'downloading' && (
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center justify-between text-xs text-textDim">
+              <span>Downloading v{localUpdate?.latestVersion}…</span>
+              <span className="font-mono">{downloadPercent}%</span>
+            </div>
+            <ProgressBar percent={downloadPercent} />
+            <div className="text-xs text-textFaint">
+              The installer will open automatically when ready
+            </div>
           </div>
         )}
+
+        {/* Already up to date */}
+        {localUpdate && !localUpdate.updateAvailable && !localUpdate.error && downloadState === 'idle' && (
+          <div className="mt-3 flex items-center gap-2 text-sm text-textDim">
+            <CheckCircle2 size={16} className="text-frost" />
+            You&apos;re on the latest version
+          </div>
+        )}
+
+        <div className="mt-3 text-[11px] text-textFaint">
+          Checked automatically on startup and every 24 hours
+        </div>
       </Section>
 
       <Section title="Made by">

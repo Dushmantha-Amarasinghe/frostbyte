@@ -10,7 +10,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/release-v1.0.0-5bb8f5?style=flat-square" alt="release" />
+  <img src="https://img.shields.io/github/v/release/Dushmantha-Amarasinghe/frostbyte-desktop?style=flat-square&color=5bb8f5&label=release" alt="release" />
+  <img src="https://img.shields.io/github/downloads/Dushmantha-Amarasinghe/frostbyte-desktop/total?style=flat-square&color=5bb8f5&label=downloads" alt="downloads" />
   <img src="https://img.shields.io/badge/platform-Windows-5bb8f5?style=flat-square&logo=windows" alt="platform" />
   <img src="https://img.shields.io/badge/encoder-NVENC%20%7C%20QSV%20%7C%20AMF-5bb8f5?style=flat-square" alt="encoders" />
   <img src="https://img.shields.io/badge/license-MIT-5bb8f5?style=flat-square" alt="license" />
@@ -64,7 +65,7 @@ Frostbyte wraps FFmpeg in a clean desktop UI built for Windows. It uses your GPU
 
 ## Download
 
-**[→ Frostbyte-Setup-1.0.0.exe](dist/Frostbyte-Setup-1.0.0.exe)** — Windows installer, no admin required
+**[→ Download latest installer](https://github.com/Dushmantha-Amarasinghe/frostbyte-desktop/releases/latest)** — Windows, no admin required
 
 Or build from source — see [Development](#development) below.
 
@@ -124,13 +125,6 @@ npm install          # install dependencies
 npm run dev          # start dev server (Electron + Vite HMR)
 npm run build:win    # build NSIS installer → dist/Frostbyte-Setup-x.x.x.exe
 npm run typecheck    # run TypeScript type checks
-```
-
-### Screenshot automation
-
-```bash
-npm run build                         # build first
-node scripts/take-screenshots.mjs     # saves to docs/screenshots/
 ```
 
 ---

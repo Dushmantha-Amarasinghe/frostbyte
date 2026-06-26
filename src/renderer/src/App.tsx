@@ -37,7 +37,7 @@ function AnimatedRoutes(): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
-  const { setCaps, setOutputConfig, setAppInfo } = useAppStore()
+  const { setCaps, setOutputConfig, setAppInfo, setUpdateInfo } = useAppStore()
   const { setItems, applyProgress } = useQueueStore()
   const { setViews, setActivity } = useWatchStore()
 
@@ -51,11 +51,13 @@ function App(): React.JSX.Element {
     const offProgress = window.frostbyte.onJobProgress(applyProgress)
     const offWatchChanged = window.frostbyte.onWatchChanged(setViews)
     const offWatchActivity = window.frostbyte.onWatchActivity(setActivity)
+    const offUpdateAvailable = window.frostbyte.onUpdateAvailable(setUpdateInfo)
     return () => {
       offChanged()
       offProgress()
       offWatchChanged()
       offWatchActivity()
+      offUpdateAvailable()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
