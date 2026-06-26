@@ -8,6 +8,10 @@ function file(): string {
   return join(app.getPath('userData'), 'output-config.json')
 }
 
+export function isFirstLaunch(): boolean {
+  return !existsSync(file())
+}
+
 export function loadOutputConfig(): OutputConfig {
   try {
     if (existsSync(file())) {

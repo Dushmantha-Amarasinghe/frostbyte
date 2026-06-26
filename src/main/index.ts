@@ -5,7 +5,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { registerIpc } from './ipc'
 import { detectEncoders } from './encoder-detect'
-import { loadOutputConfig } from './config'
+import { loadOutputConfig, isFirstLaunch } from './config'
 
 let mainWindow: BrowserWindow | null = null
 let services: ReturnType<typeof registerIpc> | null = null
@@ -104,6 +104,12 @@ app.whenReady().then(() => {
   })
   ipcMain.on('window:close', () => mainWindow?.close())
 
+  // On first launch (no saved config yet) default both behaviours on.
+  const firstLaunch = isFirstLaunch()
+  if (firstLaunch) {
+    app.setLoginItemSettings({ openAtLogin: true })
+  }
+
   services = registerIpc(() => mainWindow, applyTray)
   createWindow()
 
@@ -117,8 +123,8 @@ app.whenReady().then(() => {
         .finally(() => services?.watch.init().catch(() => {}))
     )
 
-  // Restore tray state from persisted config.
-  applyTray(loadOutputConfig().enableTray ?? false)
+  // Restore tray state from persisted config (defaults to true for new installs).
+  applyTray(loadOutputConfig().enableTray ?? true)
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()

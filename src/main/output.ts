@@ -5,7 +5,8 @@ import { MediaInfo, OutputConfig } from '@shared/ipc-contract'
 
 export const DEFAULT_OUTPUT_CONFIG: OutputConfig = {
   folder: null,
-  template: '{name}_frostbyte'
+  template: '{name}_frostbyte',
+  enableTray: true
 }
 
 function sanitize(name: string): string {
