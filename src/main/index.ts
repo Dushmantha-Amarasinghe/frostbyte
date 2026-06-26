@@ -20,7 +20,10 @@ function killOrphanedFfmpeg(): Promise<void> {
 
 function applyTray(enabled: boolean): void {
   if (enabled && !tray) {
-    const img = nativeImage.createFromPath(icon).resize({ width: 16, height: 16 })
+    // In packaged app, icon lives at process.resourcesPath/icon.png (extraResources).
+    // In dev, fall back to the ?asset path which resolves correctly relative to out/main/.
+    const iconPath = is.dev ? icon : join(process.resourcesPath, 'icon.png')
+    const img = nativeImage.createFromPath(iconPath).resize({ width: 16, height: 16 })
     tray = new Tray(img)
     tray.setToolTip('Frostbyte')
     tray.setContextMenu(

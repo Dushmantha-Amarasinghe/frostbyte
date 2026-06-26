@@ -23,6 +23,8 @@ extraResources:
   - from: resources/ffmpeg
     to: ffmpeg
     filter: ['**/*']
+  - from: resources/icon.png
+    to: icon.png
 win:
   executableName: Frostbyte
   icon: resources/icon.png
