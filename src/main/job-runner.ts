@@ -1,5 +1,5 @@
 import { spawn, ChildProcess, execFile } from 'child_process'
-import { tmpdir, constants as osConstants } from 'os'
+import { tmpdir } from 'os'
 import { join } from 'path'
 import { statSync, existsSync, unlinkSync } from 'fs'
 import { ffmpegPath } from './ffmpeg-path'
@@ -43,7 +43,9 @@ function spawnFfmpeg(
   const full = ['-progress', 'pipe:1', '-nostats', ...args]
   const child = spawn(ffmpegPath(), full, { windowsHide: true })
   if (lowPriority && child.pid) {
-    try { process.setPriority(child.pid, osConstants.priority.PRIORITY_BELOW_NORMAL) } catch { /* ignore */ }
+    execFile('powershell', ['-NoProfile', '-NonInteractive', '-Command',
+      `try{(Get-Process -Id ${child.pid} -ErrorAction Stop).PriorityClass='BelowNormal'}catch{}`
+    ], () => {})
   }
   const parser = new ProgressParser(id, durationSec, onProgress, pass)
   let stderrTail = ''
