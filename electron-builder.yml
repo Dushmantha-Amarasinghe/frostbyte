@@ -29,8 +29,6 @@ win:
   target:
     - target: nsis
       arch: [x64]
-    - target: portable
-      arch: [x64]
 nsis:
   oneClick: false
   perMachine: false
@@ -39,6 +37,4 @@ nsis:
   shortcutName: Frostbyte
   uninstallDisplayName: Frostbyte
   createDesktopShortcut: always
-portable:
-  artifactName: Frostbyte-Portable-${version}.${ext}
 npmRebuild: false

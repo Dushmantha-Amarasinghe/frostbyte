@@ -14,7 +14,7 @@ export function Settings(): React.JSX.Element {
   )
 
   useEffect(() => {
-    window.frostbyte.getStartup().then(setStartWithWindows)
+    window.frostbyte.getStartup().then(setStartWithWindows).catch(() => {})
   }, [])
   const [folder, setFolder] = useState(outputConfig.folder ?? '')
   const [template, setTemplate] = useState(outputConfig.template || '{name}_frostbyte')
