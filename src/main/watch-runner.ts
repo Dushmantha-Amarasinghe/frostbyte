@@ -22,6 +22,13 @@ type Changed = () => void
  */
 export class WatchRunner {
   private running = false
+  private stopping = false
+  private suspended = false
+  private lowPriority = false
+  private cancelRunning: (() => void) | null = null
+  private suspendRunning: (() => void) | null = null
+  private resumeRunning: (() => void) | null = null
+  private lastActivity: WatchActivity | null = null
   private holdTimer: NodeJS.Timeout | null = null
 
   constructor(
@@ -41,16 +48,44 @@ export class WatchRunner {
     void this.drain()
   }
 
+  setBackgroundMode(enabled: boolean): void {
+    this.lowPriority = enabled
+  }
+
+  pause(): void {
+    if (this.suspended || !this.suspendRunning) return
+    this.suspended = true
+    this.suspendRunning()
+    if (this.lastActivity) {
+      this.lastActivity = { ...this.lastActivity, paused: true }
+      this.emitActivity(this.lastActivity)
+    }
+  }
+
+  resume(): void {
+    if (!this.suspended || !this.resumeRunning) return
+    this.suspended = false
+    this.resumeRunning()
+    if (this.lastActivity) {
+      this.lastActivity = { ...this.lastActivity, paused: false }
+      this.emitActivity(this.lastActivity)
+    }
+  }
+
   stop(): void {
+    this.stopping = true
     if (this.holdTimer) clearInterval(this.holdTimer)
+    if (this.suspended) this.resumeRunning?.()
+    this.cancelRunning?.()
   }
 
   private async drain(): Promise<void> {
-    if (this.running) return
+    if (this.running || this.stopping) return
     this.running = true
     try {
       // eslint-disable-next-line no-constant-condition
       while (true) {
+        if (this.stopping) break
         const folders = this.ledger.listFolders().filter((f) => f.enabled)
         if (!folders.length) break
         const next = this.ledger.nextQueued(folders.map((f) => f.id))
@@ -112,17 +147,29 @@ export class WatchRunner {
     }
 
     const onProgress = (e: ProgressEvent): void => {
-      this.emitActivity({
+      const act: WatchActivity = {
         folderId: folder.id,
         fingerprint: rec.fingerprint,
         name: rec.name,
         progress: e,
-        waitingReason: null
-      })
+        waitingReason: null,
+        paused: this.suspended
+      }
+      this.lastActivity = act
+      this.emitActivity(act)
     }
 
     try {
-      const result = await runJob(item, cachedCaps(), onProgress, { provenance }).promise
+      const job = runJob(item, cachedCaps(), onProgress, { provenance, lowPriority: this.lowPriority })
+      this.cancelRunning = job.cancel
+      this.suspendRunning = job.suspend
+      this.resumeRunning = job.resume
+      const result = await job.promise
+      this.cancelRunning = null
+      this.suspendRunning = null
+      this.resumeRunning = null
+      this.lastActivity = null
+      this.suspended = false
 
       // --- Validate before replacing (gotcha #2) ---
       const outInfo = await probe(tempOut).catch(() => null)
@@ -171,8 +218,14 @@ export class WatchRunner {
       })
       this.onChanged()
     } catch (err) {
+      this.cancelRunning = null
+      this.suspendRunning = null
+      this.resumeRunning = null
+      this.lastActivity = null
+      this.suspended = false
       await rm(tempOut, { force: true })
-      const msg = err instanceof Error ? err.message : 'Encode failed'
+      const detail = err instanceof Error ? err.message : ''
+      const msg = detail || 'Encoding failed — unknown error'
       this.ledger.markStatus(rec.fingerprint, 'error', { reason: msg })
       this.onChanged()
     }

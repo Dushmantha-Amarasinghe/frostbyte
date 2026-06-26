@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { RefreshCw, CheckCircle2, Download, Cpu, Github, Coffee } from 'lucide-react'
+import { RefreshCw, CheckCircle2, Download, Cpu, ExternalLink, Coffee } from 'lucide-react'
 import { Snowflake } from '@renderer/components/Snowflake'
 import { Button, Label } from '@renderer/components/ui'
 import { useAppStore } from '@renderer/store/appStore'
@@ -91,13 +91,13 @@ export function About(): React.JSX.Element {
               onClick={(e) => { e.preventDefault(); window.open('https://github.com/Dushmantha-Amarasinghe') }}
               className="no-drag flex items-center gap-1.5 rounded-md border border-white/10 bg-panel2 px-3 py-2 text-xs text-textDim transition-colors hover:border-white/20 hover:text-text"
             >
-              <Github size={13} />
+              <ExternalLink size={13} />
               GitHub
             </a>
             <a
-              href="https://buymeacoffee.com/dushmantha"
-              onClick={(e) => { e.preventDefault(); window.open('https://buymeacoffee.com/dushmantha') }}
-              className="no-drag flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-400 transition-colors hover:bg-amber-500/20 hover:text-amber-300"
+              href="https://www.paypal.com/donate?business=dsbamarasinghe1234@gmail.com&currency_code=USD&amount=5"
+              onClick={(e) => { e.preventDefault(); window.open('https://www.paypal.com/donate?business=dsbamarasinghe1234@gmail.com&currency_code=USD&amount=5') }}
+              className="no-drag flex items-center gap-1.5 rounded-md border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-400/20 hover:text-amber-300"
             >
               <Coffee size={13} />
               Buy me a coffee

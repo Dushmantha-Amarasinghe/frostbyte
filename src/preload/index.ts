@@ -63,6 +63,8 @@ const frostbyte = {
   // updates / info
   checkUpdate: (): Promise<UpdateCheckResult> => ipcRenderer.invoke(IPC.updateCheck),
   appInfo: (): Promise<AppInfo> => ipcRenderer.invoke(IPC.appInfo),
+  getStartup: (): Promise<boolean> => ipcRenderer.invoke(IPC.appGetStartup),
+  setStartup: (enabled: boolean): Promise<void> => ipcRenderer.invoke(IPC.appSetStartup, { enabled }),
 
   // watch folders
   watchList: (): Promise<WatchFolderView[]> => ipcRenderer.invoke(IPC.watchList),
@@ -85,6 +87,8 @@ const frostbyte = {
   watchRemove: (id: string): Promise<WatchFolderView[]> => ipcRenderer.invoke(IPC.watchRemove, { id }),
   watchRetryFile: (fingerprint: string): Promise<WatchFolderView[]> =>
     ipcRenderer.invoke(IPC.watchRetryFile, { fingerprint }),
+  watchPause: (): Promise<void> => ipcRenderer.invoke(IPC.watchPause),
+  watchResume: (): Promise<void> => ipcRenderer.invoke(IPC.watchResume),
 
   // window controls (frameless titlebar)
   windowMinimize: (): void => ipcRenderer.send('window:minimize'),

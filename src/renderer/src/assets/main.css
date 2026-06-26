@@ -1,0 +1,174 @@
+@import '@fontsource-variable/plus-jakarta-sans';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Kill Chromium's blue focus ring everywhere; we provide our own focus states */
+*:focus,
+*:focus-visible {
+  outline: none;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  background: #0b0b0c;
+  color: #f4f4f5;
+  overflow: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Align digits in data rows */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ---- Quiet neutral backdrop: soft top light, no color cast ---- */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 75% at 50% -15%, #161618 0%, #0b0b0c 58%),
+    #0b0b0c;
+}
+/* very fine neutral grain for depth */
+.backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- Surfaces: solid graphite cards, hairline borders ---- */
+.glass {
+  background: #151517;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.glass-strong {
+  background: #1c1c1f;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+/* Selected / active emphasis — subtle light edge, no glow */
+.frost-edge {
+  background: #1c1c1f;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.hairline {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Drag regions for the frameless titlebar */
+.drag {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Progress shimmer (neutral) */
+.shimmer-mask {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-mask::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+  background-clip: padding-box;
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #e6e6e8 0%, #e6e6e8 var(--pct, 50%), rgba(255, 255, 255, 0.1) var(--pct, 50%));
+  outline: none;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #f4f4f5;
+  cursor: pointer;
+  border: 2px solid #0b0b0c;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Override native select dropdown blue highlight in Chromium/Electron */
+select option {
+  background: #151517;
+  color: #f4f4f5;
+}
+select option:checked {
+  background: #2a2a2e linear-gradient(0deg, #2a2a2e 0%, #2a2a2e 100%);
+  color: #f4f4f5;
+}
+select option:hover {
+  background: #26262a;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(260%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

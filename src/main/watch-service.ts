@@ -120,6 +120,18 @@ export class WatchService {
     return views
   }
 
+  setBackgroundMode(enabled: boolean): void {
+    this.runner.setBackgroundMode(enabled)
+  }
+
+  pause(): void {
+    this.runner.pause()
+  }
+
+  resume(): void {
+    this.runner.resume()
+  }
+
   shutdown(): void {
     this.runner.stop()
     this.watcher.closeAll()

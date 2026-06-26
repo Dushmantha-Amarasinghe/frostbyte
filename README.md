@@ -49,7 +49,7 @@ Requires Node 20+ and Windows (NVENC/QSV/AMF detection is Windows-only).
 
 If Frostbyte saves you time, a coffee keeps development going.
 
-[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%98%95-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/dushmantha)
+[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-0070BA?style=flat-square&logo=paypal&logoColor=white)](https://www.paypal.com/donate?business=dsbamarasinghe1234@gmail.com&currency_code=USD&amount=5)
 
 ## License
 

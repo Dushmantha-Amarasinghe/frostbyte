@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Settings2, FolderOpen } from 'lucide-react'
 import { Segmented, Toggle, Field } from '@renderer/components/ui'
 import { useAppStore } from '@renderer/store/appStore'
@@ -8,9 +8,14 @@ const TOKENS = ['{name}', '{date}', '{codec}', '{res}']
 
 export function Settings(): React.JSX.Element {
   const { outputConfig, setOutputConfig: storeSet } = useAppStore()
+  const [startWithWindows, setStartWithWindows] = useState(false)
   const [folderMode, setFolderMode] = useState<'source' | 'custom'>(
     outputConfig.folder ? 'custom' : 'source'
   )
+
+  useEffect(() => {
+    window.frostbyte.getStartup().then(setStartWithWindows)
+  }, [])
   const [folder, setFolder] = useState(outputConfig.folder ?? '')
   const [template, setTemplate] = useState(outputConfig.template || '{name}_frostbyte')
 
@@ -120,6 +125,21 @@ export function Settings(): React.JSX.Element {
             Background
           </div>
           <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm font-semibold text-text">Start with Windows</div>
+              <div className="text-xs text-textFaint">
+                Launch Frostbyte automatically when you sign in
+              </div>
+            </div>
+            <Toggle
+              checked={startWithWindows}
+              onChange={(v) => {
+                setStartWithWindows(v)
+                window.frostbyte.setStartup(v).catch(() => {})
+              }}
+            />
+          </div>
+          <div className="flex items-center justify-between border-t border-line pt-4">
             <div>
               <div className="text-sm font-semibold text-text">Run in system tray</div>
               <div className="text-xs text-textFaint">

@@ -1,15 +1,22 @@
 import { app, shell, BrowserWindow, ipcMain, Tray, Menu, nativeImage } from 'electron'
+import { execFile } from 'child_process'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { registerIpc } from './ipc'
 import { detectEncoders } from './encoder-detect'
 import { loadOutputConfig } from './config'
-import type { WatchService } from './watch-service'
 
 let mainWindow: BrowserWindow | null = null
-let watchService: WatchService | null = null
+let services: ReturnType<typeof registerIpc> | null = null
 let tray: Tray | null = null
+let forceQuit = false
+
+function killOrphanedFfmpeg(): Promise<void> {
+  return new Promise((resolve) => {
+    execFile('taskkill', ['/F', '/IM', 'ffmpeg.exe'], () => resolve())
+  })
+}
 
 function applyTray(enabled: boolean): void {
   if (enabled && !tray) {
@@ -64,7 +71,7 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => mainWindow?.show())
 
   mainWindow.on('close', (e) => {
-    if (tray) {
+    if (tray && !forceQuit) {
       e.preventDefault()
       mainWindow?.hide()
     }
@@ -97,14 +104,18 @@ app.whenReady().then(() => {
   })
   ipcMain.on('window:close', () => mainWindow?.close())
 
-  watchService = registerIpc(() => mainWindow, applyTray)
+  services = registerIpc(() => mainWindow, applyTray)
   createWindow()
 
-  // Warm the encoder cache so the UI knows hardware support quickly.
-  detectEncoders().catch(() => {})
-
-  // Re-arm persisted watch folders and start the schedule-gated runner.
-  watchService.init().catch(() => {})
+  // Sequential startup: kill orphans → detect encoders → init watch runner.
+  // Each step must fully complete before the next starts so taskkill cannot
+  // accidentally kill the capability-test ffmpeg processes spawned by detectEncoders.
+  killOrphanedFfmpeg()
+    .finally(() =>
+      detectEncoders()
+        .catch(() => {})
+        .finally(() => services?.watch.init().catch(() => {}))
+    )
 
   // Restore tray state from persisted config.
   applyTray(loadOutputConfig().enableTray ?? false)
@@ -114,7 +125,12 @@ app.whenReady().then(() => {
   })
 })
 
+// Cancel all running jobs and allow the window to close when quitting.
+app.on('before-quit', () => {
+  forceQuit = true
+  services?.shutdown()
+})
+
 app.on('window-all-closed', () => {
-  watchService?.shutdown()
   if (process.platform !== 'darwin') app.quit()
 })

@@ -59,6 +59,8 @@ export interface OutputConfig {
   template: string
   /** Hide to tray on window close instead of quitting. */
   enableTray?: boolean
+  /** Run FFmpeg at below-normal priority so games/GPU apps aren't starved. */
+  backgroundMode?: boolean
 }
 
 export interface UpdateCheckResult {
@@ -85,6 +87,8 @@ export interface WatchActivity {
   progress: ProgressEvent | null
   /** Why processing is currently paused, if it is (e.g. outside quiet hours). */
   waitingReason: string | null
+  /** True while the FFmpeg process is suspended (user hit pause). */
+  paused?: boolean
 }
 
 /** A folder plus its file records and rollup, for the renderer. */
@@ -115,6 +119,8 @@ export const IPC = {
   updateCheck: 'update:check',
   revealFile: 'shell:revealFile',
   appInfo: 'app:getInfo',
+  appGetStartup: 'app:getStartup',
+  appSetStartup: 'app:setStartup',
   // watch folders
   watchList: 'watch:list',
   watchAdd: 'watch:add',
@@ -123,6 +129,8 @@ export const IPC = {
   watchToggle: 'watch:toggle',
   watchRetryFile: 'watch:retryFile',
   watchChooseFolder: 'watch:chooseFolder',
+  watchPause: 'watch:pause',
+  watchResume: 'watch:resume',
   // events (main -> renderer)
   evtJobProgress: 'job:progress',
   evtJobStart: 'job:start',

@@ -91,7 +91,7 @@ export const DEFAULT_WATCH_FOLDER: Omit<WatchFolder, 'id' | 'path' | 'settings'>
   holdDays: 14,
   presetId: 'balanced',
   schedule: DEFAULT_WATCH_SCHEDULE,
-  minSavingsPercent: 15
+  minSavingsPercent: 5
 }
 
 /** File extensions that mean "still being written" — never queue these. */
@@ -115,6 +115,7 @@ export interface SavingsInput {
   width: number
   height: number
   vcodec: string
+  fps?: number
 }
 
 /**
@@ -154,6 +155,20 @@ export function predictSavingsPercent(settings: CompressionSettings, info: Savin
   const targetFactor = codecFactor[settings.videoCodec] ?? 1
   const sourceFactor = codecFactor[info.vcodec?.toLowerCase() ?? ''] ?? 1
 
+  // Screen recording penalty: low-FPS sources (< 15fps) are typically captured by
+  // consumer tools (Bandicam, OBS, etc.) whose encoders are far less efficient than
+  // x264/NVENC. Real-world tests show ~25-35% savings even for same-codec re-encodes.
+  const isScreenRecording = (info.fps ?? 30) < 15
+
+  // Same-codec penalty: consumer encoders (Bandicam, OBS default settings, etc.) produce
+  // h264/hevc that is 15-25% larger than what x264/NVENC would at the same perceptual
+  // quality — even at bitrates below the quality ceiling. Without this, long Bandicam
+  // files (40+ min, bitrate < 2200 kbps) get predicted as 0% savings and are skipped.
+  // Frostbyte-compressed outputs are already fingerprinted as 'done' in the ledger and
+  // won't be re-queued, so this penalty only affects external consumer-encoded files.
+  const isSameCodecFamily = sourceFactor === targetFactor
+  const sourceEfficiency = isScreenRecording ? 0.75 : isSameCodecFamily ? 0.82 : 1.0
+
   // Resolution area ratio — downscaling reduces bitrate roughly proportional to area.
   const resFactor = (targetH / info.height) ** 2
 
@@ -162,11 +177,10 @@ export function predictSavingsPercent(settings: CompressionSettings, info: Savin
   const megapixels = (width16x9 * targetH) / 1_000_000
   const qualityCeilingKbps = 2200 * (megapixels / 2.07) * targetFactor
 
-  // (B) Codec+resolution translation: preserves source quality in the target codec.
-  const translatedKbps = sourceKbps * (targetFactor / sourceFactor) * resFactor
+  // (B) Codec+resolution translation: source bitrate adjusted for encoder efficiency gap.
+  const translatedKbps = sourceKbps * sourceEfficiency * (targetFactor / sourceFactor) * resFactor
 
-  // Output lands near the smaller of the two (can't exceed quality ceiling; won't
-  // re-encode beyond source quality).
+  // Output lands near the smaller of the two.
   const estimatedOutputKbps = Math.min(qualityCeilingKbps, translatedKbps)
 
   if (estimatedOutputKbps >= sourceKbps) return 0

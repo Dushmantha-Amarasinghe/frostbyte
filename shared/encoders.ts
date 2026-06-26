@@ -89,18 +89,20 @@ function familyOf(encoder: string): ResolvedEncoder['family'] {
 /** Maps the generic x264-style preset to NVENC p1..p7 / SVT-AV1 numeric. */
 export function mapPreset(family: ResolvedEncoder['family'], preset: string): string {
   if (family === 'nvenc') {
+    // NVENC quality is driven by CQ value, not preset — p5+ gives diminishing returns
+    // for massive speed cost. Cap at p4 so Watch Folders stays fast.
     const m: Record<string, string> = {
       ultrafast: 'p1',
-      superfast: 'p2',
-      veryfast: 'p3',
-      faster: 'p4',
-      fast: 'p4',
-      medium: 'p5',
-      slow: 'p6',
-      slower: 'p7',
-      veryslow: 'p7'
+      superfast: 'p1',
+      veryfast: 'p2',
+      faster: 'p2',
+      fast: 'p3',
+      medium: 'p3',
+      slow: 'p4',
+      slower: 'p4',
+      veryslow: 'p4'
     }
-    return m[preset] ?? 'p5'
+    return m[preset] ?? 'p4'
   }
   return preset
 }

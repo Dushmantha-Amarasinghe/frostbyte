@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FolderOpen, X, Sliders } from 'lucide-react'
+import { FolderOpen, X, Sliders, AlertTriangle, Info } from 'lucide-react'
 import { Button, Field, Segmented, Select, Slider, NumberInput, Label } from './ui'
 import { CompressionSettings, DEFAULT_SETTINGS } from '@shared/settings'
 import { SIMPLE_PRESETS } from '@shared/presets'
@@ -44,7 +44,7 @@ const NEW_DRAFT: FolderDraft = {
   presetId: 'balanced',
   settings: settingsFromPreset('balanced'),
   schedule: DEFAULT_WATCH_SCHEDULE,
-  minSavingsPercent: 15
+  minSavingsPercent: 5
 }
 
 export function WatchFolderModal({
@@ -220,9 +220,30 @@ export function WatchFolderModal({
             )}
 
             {/* Min savings */}
-            <Field label="Skip if savings below" hint="Avoids re-compressing files that are already efficient.">
-              <Slider value={draft.minSavingsPercent} min={0} max={50} onChange={(v) => upd('minSavingsPercent', v)} badge={`${draft.minSavingsPercent}%`} />
+            <Field label="Smart skip threshold">
+              <Slider
+                value={draft.minSavingsPercent}
+                min={0}
+                max={50}
+                onChange={(v) => upd('minSavingsPercent', v)}
+                badge={draft.minSavingsPercent === 0 ? 'Off' : `${draft.minSavingsPercent}%`}
+              />
             </Field>
+            {draft.minSavingsPercent === 0 ? (
+              <div className="flex items-start gap-2.5 rounded-lg border border-frost/20 bg-frost/[0.07] px-3 py-2.5">
+                <Info size={13} className="mt-0.5 shrink-0 text-frost" />
+                <p className="text-xs leading-snug text-frost/80">
+                  Every file will be attempted. Results that aren't smaller are automatically discarded — the original is always kept safe.
+                </p>
+              </div>
+            ) : (
+              <div className="flex items-start gap-2.5 rounded-lg border border-amber-500/20 bg-amber-500/[0.07] px-3 py-2.5">
+                <AlertTriangle size={13} className="mt-0.5 shrink-0 text-amber-400" />
+                <p className="text-xs leading-snug text-amber-300/80">
+                  Uses a prediction formula to skip files unlikely to compress. Some compressible files may still be skipped incorrectly. Set to <strong className="text-amber-300">Off</strong> to guarantee no files are missed.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-end gap-2 border-t border-line px-5 py-4">

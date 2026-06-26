@@ -20,7 +20,7 @@ const VIDEO_FILTERS = [
 export function registerIpc(
   getWindow: () => BrowserWindow | null,
   onTrayToggle: (enabled: boolean) => void
-): WatchService {
+): { watch: WatchService; shutdown: () => void } {
   let outputConfig: OutputConfig = loadOutputConfig()
   const emit = (channel: string, payload: unknown): void => {
     getWindow()?.webContents.send(channel, payload)
@@ -30,6 +30,7 @@ export function registerIpc(
     (views) => emit(IPC.evtWatchChanged, views),
     (activity) => emit(IPC.evtWatchActivity, activity)
   )
+  watch.setBackgroundMode(outputConfig.backgroundMode ?? false)
 
   ipcMain.handle(IPC.openFiles, async () => {
     const win = getWindow()
@@ -96,6 +97,7 @@ export function registerIpc(
     queue.setOutputConfig(c)
     saveOutputConfig(c)
     onTrayToggle(c.enableTray ?? false)
+    watch.setBackgroundMode(c.backgroundMode ?? false)
   })
 
   ipcMain.handle(IPC.updateCheck, async () => checkForUpdate())
@@ -104,6 +106,10 @@ export function registerIpc(
     version: app.getVersion(),
     ffmpegVersion: await ffmpegVersion(ffmpegPath())
   }))
+  ipcMain.handle(IPC.appGetStartup, async () => app.getLoginItemSettings().openAtLogin)
+  ipcMain.handle(IPC.appSetStartup, async (_e, { enabled }: { enabled: boolean }) => {
+    app.setLoginItemSettings({ openAtLogin: enabled })
+  })
 
   // ---- Watch folders ----
   ipcMain.handle(IPC.watchChooseFolder, async () => {
@@ -125,6 +131,14 @@ export function registerIpc(
   ipcMain.handle(IPC.watchRetryFile, async (_e, { fingerprint }: { fingerprint: string }) =>
     watch.retryFile(fingerprint)
   )
+  ipcMain.handle(IPC.watchPause, async () => watch.pause())
+  ipcMain.handle(IPC.watchResume, async () => watch.resume())
 
-  return watch
+  return {
+    watch,
+    shutdown: () => {
+      queue.cancelAll()
+      watch.shutdown()
+    }
+  }
 }
