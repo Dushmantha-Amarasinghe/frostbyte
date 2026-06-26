@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { FolderOpen, RefreshCw, CheckCircle2, Download, Cpu } from 'lucide-react'
+import { RefreshCw, CheckCircle2, Download, Cpu, Github, Coffee } from 'lucide-react'
 import { Snowflake } from '@renderer/components/Snowflake'
-import { Button, Field, Label } from '@renderer/components/ui'
+import { Button, Label } from '@renderer/components/ui'
 import { useAppStore } from '@renderer/store/appStore'
 import { UpdateCheckResult } from '@shared/ipc-contract'
 import { cn } from '@renderer/lib/utils'
 
 export function About(): React.JSX.Element {
-  const { appInfo, caps, outputConfig, setOutputConfig } = useAppStore()
+  const { appInfo, caps } = useAppStore()
   const [update, setUpdate] = useState<UpdateCheckResult | null>(null)
   const [checking, setChecking] = useState(false)
 
@@ -19,21 +19,6 @@ export function About(): React.JSX.Element {
     } finally {
       setChecking(false)
     }
-  }
-
-  const pickFolder = async (): Promise<void> => {
-    const folder = await window.frostbyte.chooseOutputDir()
-    if (folder) {
-      const next = { ...outputConfig, folder }
-      setOutputConfig(next)
-      window.frostbyte.setOutputConfig(next)
-    }
-  }
-
-  const setSameFolder = (): void => {
-    const next = { ...outputConfig, folder: null }
-    setOutputConfig(next)
-    window.frostbyte.setOutputConfig(next)
   }
 
   const hwList = [
@@ -58,38 +43,6 @@ export function About(): React.JSX.Element {
           video compressor · v{appInfo?.version ?? '1.0.0'}
         </div>
       </motion.div>
-
-      <Section title="Output">
-        <Field label="Destination folder">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 truncate rounded-md bg-black/30 px-3 py-2 font-mono text-xs text-textDim hairline">
-              {outputConfig.folder ?? 'Same folder as each source'}
-            </div>
-            <Button onClick={pickFolder}>
-              <FolderOpen size={15} />
-              Choose
-            </Button>
-            {outputConfig.folder && (
-              <Button variant="ghost" onClick={setSameFolder}>
-                Reset
-              </Button>
-            )}
-          </div>
-        </Field>
-        <div className="mt-4">
-          <Field label="Filename template" hint="Tokens: {name} {date} {codec} {res} {preset}">
-            <input
-              value={outputConfig.template}
-              onChange={(e) => {
-                const next = { ...outputConfig, template: e.target.value }
-                setOutputConfig(next)
-                window.frostbyte.setOutputConfig(next)
-              }}
-              className="no-drag w-full rounded-md bg-black/30 px-3 py-2 font-mono text-sm text-text outline-none hairline focus:border-lineBright"
-            />
-          </Field>
-        </div>
-      </Section>
 
       <Section title="System" icon={<Cpu size={15} className="text-frost" />}>
         <InfoRow label="FFmpeg" value={appInfo?.ffmpegVersion ?? '…'} />
@@ -124,6 +77,33 @@ export function About(): React.JSX.Element {
             )}
           </div>
         )}
+      </Section>
+
+      <Section title="Made by">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm font-semibold text-text">Dushmantha Amarasinghe</div>
+            <div className="mt-0.5 text-xs text-textFaint">Built with FFmpeg + Electron + React</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/Dushmantha-Amarasinghe"
+              onClick={(e) => { e.preventDefault(); window.open('https://github.com/Dushmantha-Amarasinghe') }}
+              className="no-drag flex items-center gap-1.5 rounded-md border border-white/10 bg-panel2 px-3 py-2 text-xs text-textDim transition-colors hover:border-white/20 hover:text-text"
+            >
+              <Github size={13} />
+              GitHub
+            </a>
+            <a
+              href="https://buymeacoffee.com/dushmantha"
+              onClick={(e) => { e.preventDefault(); window.open('https://buymeacoffee.com/dushmantha') }}
+              className="no-drag flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-400 transition-colors hover:bg-amber-500/20 hover:text-amber-300"
+            >
+              <Coffee size={13} />
+              Buy me a coffee
+            </a>
+          </div>
+        </div>
       </Section>
 
       <p className="mt-7 text-center font-mono text-[11px] leading-relaxed text-textFaint">
