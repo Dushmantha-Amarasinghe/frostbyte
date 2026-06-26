@@ -19,7 +19,7 @@
 
 <p align="center">
   <a href="https://dushmantha-amarasinghe.github.io/">
-    <img src="https://img.shields.io/badge/More%20Apps%20by%20Dushmantha%20%E2%86%92-dushmantha--amarasinghe.github.io-343b41?style=for-the-badge" alt="More Apps" />
+    <img src="https://img.shields.io/badge/More%20Apps%20%E2%86%92-dushmantha--amarasinghe.github.io-343b41?style=for-the-badge" alt="More Apps" />
   </a>
 </p>
 
