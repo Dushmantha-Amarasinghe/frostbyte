@@ -14,6 +14,7 @@
   <img src="https://img.shields.io/github/downloads/Dushmantha-Amarasinghe/frostbyte/total?style=flat-square&labelColor=343b41&color=e8883a&label=downloads" alt="downloads" />
   <img src="https://img.shields.io/badge/platform-Windows-0078d4?style=flat-square&labelColor=343b41&logo=windows&logoColor=white" alt="platform" />
   <img src="https://img.shields.io/badge/license-MIT-3fb950?style=flat-square&labelColor=343b41" alt="license" />
+  <a href="https://dushmantha-amarasinghe.github.io/frostbyte/"><img src="https://img.shields.io/badge/website-frostbyte-5bb8f5?style=flat-square&labelColor=343b41&logo=googlechrome&logoColor=white" alt="website" /></a>
 </p>
 
 <br />
@@ -64,7 +65,15 @@ Frostbyte wraps FFmpeg in a clean desktop UI built for Windows. It uses your GPU
 
 ## Download
 
-**[→ Download latest installer](https://github.com/Dushmantha-Amarasinghe/frostbyte/releases/latest)**
+<p align="center">
+  <a href="https://github.com/Dushmantha-Amarasinghe/frostbyte/releases/latest">
+    <img src="https://img.shields.io/github/v/release/Dushmantha-Amarasinghe/frostbyte?style=for-the-badge&logo=windows&logoColor=white&label=Download%20for%20Windows&labelColor=0078d4&color=005a9e" alt="Download for Windows" />
+  </a>
+  &nbsp;
+  <a href="https://dushmantha-amarasinghe.github.io/frostbyte/">
+    <img src="https://img.shields.io/badge/Visit%20Website-5bb8f5?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Visit Website" />
+  </a>
+</p>
 
 Or build from source — see [Development](#development) below.
 
