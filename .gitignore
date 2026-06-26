@@ -1,0 +1,19 @@
+node_modules/
+out/
+dist/
+
+# FFmpeg binaries — too large for git, download separately (see README)
+resources/ffmpeg/
+
+# SQLite ledger (user data, not source)
+*.db
+*.db-shm
+*.db-wal
+
+# App config written at runtime
+output-config.json
+
+# Logs and temp
+*.log
+.DS_Store
+Thumbs.db

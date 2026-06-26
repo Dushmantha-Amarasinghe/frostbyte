@@ -1,0 +1,44 @@
+appId: app.frostbyte.desktop
+productName: Frostbyte
+directories:
+  buildResources: build
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!shared/*'
+  - '!tests/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json,tailwind.config.ts,postcss.config.js}'
+  # resources/ are provided via extraResources (and icon is bundled at build time),
+  # so keep them out of the asar to avoid duplicating the 270MB FFmpeg binaries.
+  - '!resources/**'
+# better-sqlite3 ships a native .node binary that cannot be loaded from inside the
+# asar — unpack it so the Watch ledger works in the packaged app.
+asarUnpack:
+  - '**/node_modules/better-sqlite3/**'
+# Bundle the FFmpeg binaries as unpacked resources (resolved via process.resourcesPath/ffmpeg).
+extraResources:
+  - from: resources/ffmpeg
+    to: ffmpeg
+    filter: ['**/*']
+win:
+  executableName: Frostbyte
+  icon: resources/icon.png
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  artifactName: Frostbyte-Setup-${version}.${ext}
+  shortcutName: Frostbyte
+  uninstallDisplayName: Frostbyte
+  createDesktopShortcut: always
+portable:
+  artifactName: Frostbyte-Portable-${version}.${ext}
+npmRebuild: false
