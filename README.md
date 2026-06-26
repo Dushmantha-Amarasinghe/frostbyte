@@ -17,6 +17,12 @@
   <a href="https://dushmantha-amarasinghe.github.io/frostbyte/"><img src="https://img.shields.io/badge/website-frostbyte-5bb8f5?style=flat-square&labelColor=343b41&logo=googlechrome&logoColor=white" alt="website" /></a>
 </p>
 
+<p align="center">
+  <a href="https://dushmantha-amarasinghe.github.io/">
+    <img src="https://img.shields.io/badge/More%20Apps%20by%20Dushmantha%20%E2%86%92-dushmantha--amarasinghe.github.io-343b41?style=for-the-badge" alt="More Apps" />
+  </a>
+</p>
+
 <br />
 
 <p align="center">
@@ -161,7 +167,9 @@ Bundled FFmpeg binaries are licensed under the **GPL v2+**. See [ffmpeg.org/lega
 ---
 
 <p align="center">
-  Made by <a href="https://github.com/Dushmantha-Amarasinghe">Dushmantha Amarasinghe</a>
+  Made by <a href="https://dushmantha-amarasinghe.github.io/">Dushmantha Amarasinghe</a>
+  &nbsp;·&nbsp;
+  <a href="https://dushmantha-amarasinghe.github.io/">More apps →</a>
   &nbsp;·&nbsp;
   <a href="https://www.paypal.com/donate?business=dsbamarasinghe1234@gmail.com&currency_code=USD&amount=5">Buy me a coffee ☕</a>
 </p>
