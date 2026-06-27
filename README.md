@@ -171,5 +171,5 @@ Bundled FFmpeg binaries are licensed under the **GPL v2+**. See [ffmpeg.org/lega
   &nbsp;·&nbsp;
   <a href="https://dushmantha-amarasinghe.github.io/">More apps →</a>
   &nbsp;·&nbsp;
-  <a href="https://www.paypal.com/donate?business=dsbamarasinghe1234@gmail.com&currency_code=USD&amount=5">Buy me a coffee ☕</a>
+  <a href="https://ko-fi.com/dushmantha">Buy me a coffee ☕</a>
 </p>

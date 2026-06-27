@@ -169,8 +169,8 @@ export function About(): React.JSX.Element {
               GitHub
             </a>
             <a
-              href="https://www.paypal.com/donate?business=dsbamarasinghe1234@gmail.com&currency_code=USD&amount=5"
-              onClick={(e) => { e.preventDefault(); window.open('https://www.paypal.com/donate?business=dsbamarasinghe1234@gmail.com&currency_code=USD&amount=5') }}
+              href="https://ko-fi.com/dushmantha"
+              onClick={(e) => { e.preventDefault(); window.open('https://ko-fi.com/dushmantha') }}
               className="no-drag flex items-center gap-1.5 rounded-md border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-400/20 hover:text-amber-300"
             >
               <Coffee size={13} />

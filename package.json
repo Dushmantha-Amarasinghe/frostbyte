@@ -1,6 +1,6 @@
 {
   "name": "frostbyte-desktop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Frostbyte — professional FFmpeg video compression",
   "main": "./out/main/index.js",
   "author": "Frostbyte",
